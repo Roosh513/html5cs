@@ -13,14 +13,16 @@ function Square(x,y,width,height){
 	this.y = y;
 	this.width = width;
 	this.height = height;
-	console.log("x: " + this.x + " y: " + this.y);
+	this.originX = x;
+	this.originY = y;
+	this.hasSwappedX = false;
 }
 // Simple way to attach js code to the canvas is by using a function
 function sketchProc(processing) {
 	// Override draw function, by default it will be called 60 times per second
 	processing.setup = function(){
 		processing.size(500,500);
-		processing.frameRate(15);
+		processing.frameRate(60);
 		
 		var centerX = (processing.width / 2);
 		var centerY = (processing.height / 2);
@@ -34,6 +36,55 @@ function sketchProc(processing) {
 		}
 	};
 	processing.draw = function() {	
+		processing.background(224);
+		
+		function swapSquares(sq1, sq2){
+			var shiftX = false;
+			var shiftY = false;
+			var swapComplete = false;
+			if((sq2.y + 50 + 5) - sq1.y >= 0 && !sq1.hasSwappedX){
+				sq1.y += 1;
+				sq2.y -= 1;
+			}
+			else{
+				shiftX = true;
+			}
+			
+			if(shiftX){
+				if(sq1.x < sq2.originX){
+					sq1.x += 1;
+					sq2.x -= 1;
+				}
+				else{
+					shiftY = true;
+					sq1.hasSwappedX = true;
+					sq2.hasSwappedX = true;
+				}
+			}
+			
+			if(shiftY){
+				if(sq1.y > sq1.originY){
+					sq1.y -= 1;
+					sq2.y += 1;
+				}
+				else{
+					swapComplete = true;
+				}
+			}
+			
+			if(swapComplete){
+				var sq1OriginalX = sq1.originX;
+				var sq1OriginalY = sq1.originY;
+				sq1.originX = sq2.originX;
+				sq1.originY = sq2.originY;
+				sq2.originX = sq1OriginalX;
+				sq2.originY = sq1OriginalY;
+				sq1.hasSwappedX = false;
+				sq2.hasSwappedX = false;
+				processing.exit();
+			}
+		}
+		
 		for(var i = 0; i < numSquares; i++){
 			processing.rectMode(processing.CENTER);
 			processing.rect(
@@ -43,6 +94,8 @@ function sketchProc(processing) {
 				objArr[i].height
 			);
 		}
+		
+		swapSquares(objArr[0], objArr[1]);
 	};  
 }
 
