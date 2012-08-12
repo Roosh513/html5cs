@@ -1,0 +1,53 @@
+<h1>Bubble Sort</h1>
+
+<canvas id="visualizor">
+	I'm sorry you're browser doesn't seem to support Canvas at this time.
+</canvas>
+
+<script id="script1" type="text/javascript">
+var numSquares = 2;
+var objArr = new Array(numSquares);
+
+function Square(x,y,width,height){
+	this.x = x;
+	this.y = y;
+	this.width = width;
+	this.height = height;
+	console.log("x: " + this.x + " y: " + this.y);
+}
+// Simple way to attach js code to the canvas is by using a function
+function sketchProc(processing) {
+	// Override draw function, by default it will be called 60 times per second
+	processing.setup = function(){
+		processing.size(500,500);
+		processing.frameRate(15);
+		
+		var centerX = (processing.width / 2);
+		var centerY = (processing.height / 2);
+		var margin = 5;
+		var elementWidth = (50 + 5) * numSquares
+		var startX = centerX - (elementWidth / 2)
+		for(var i = 0; i < numSquares; i++){
+			var x = startX + (50 / 2) + ((50 + 5) * i);
+			var y = centerY; 
+			objArr[i] = new Square(x, y, 50, 50);
+		}
+	};
+	processing.draw = function() {	
+		for(var i = 0; i < numSquares; i++){
+			processing.rectMode(processing.CENTER);
+			processing.rect(
+				objArr[i].x,
+				objArr[i].y,
+				objArr[i].width,
+				objArr[i].height
+			);
+		}
+	};  
+}
+
+var canvas = document.getElementById("visualizor");
+// attaching the sketchProc function to the canvas
+var p = new Processing(canvas, sketchProc);
+// p.exit(); to detach it
+</script>
